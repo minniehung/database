@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Advice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        .header {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .header button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .advice-container {
+            text-align: center;
+            position: relative;
+        }
+        .text-input {
+            margin-top: 20px;
+            padding: 10px;
+            width: 300px;
+            height: 150px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: none; /* 防止文本框大小可調整 */
+        }
+        .send-button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        .confirm-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .popup-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .popup-button {
+            margin-top: 10px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <button onclick="location.href='member-option.html'" style="background-color: green;">回前頁</button>
+    <button onclick="location.href='choose-user.html'" style="background-color: green;">登出</button>
+</div>
+<div class="advice-container">
+    <h2>Advice</h2>
+    <textarea id="adviceInput" class="text-input" placeholder="輸入您的建議或意見"></textarea>
+    <button class="send-button" onclick="showConfirmPopup()">發送</button>
+</div>
+
+<!-- 确认发送窗口 -->
+<div class="confirm-popup" id="confirm-popup" style="display: none;">
+    <div class="popup-content">
+        <p>是否確認發送？</p>
+        <button class="popup-button" onclick="sendAdvice()">是</button>
+        <button class="popup-button" onclick="closeConfirmPopup()">否</button>
+    </div>
+</div>
+
+<!-- 发送成功提示窗口 -->
+<div class="confirm-popup" id="success-popup" style="display: none;">
+    <div class="popup-content">
+        <p>發送成功！</p>
+        <button class="popup-button" onclick="closeSuccessPopup()">确定</button>
+    </div>
+</div>
+
+<script>
+    function showConfirmPopup() {
+        document.getElementById('confirm-popup').style.display = 'block';
+    }
+
+    function closeConfirmPopup() {
+        document.getElementById('confirm-popup').style.display = 'none';
+    }
+
+    function closeSuccessPopup() {
+        document.getElementById('success-popup').style.display = 'none';
+    }
+
+    function sendAdvice() {
+        const advice = document.getElementById('adviceInput').value;
+
+        // 如果建议内容为空，则不执行提交操作
+        if (!advice.trim()) {
+            alert('请填写建议内容');
+            return;
+        }
+
+        fetch('/submit-advice', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ advice: advice })
+        })
+            .then(response => {
+                if (response.ok) {
+                    // 提交成功后显示发送成功提示窗口，并清空文本框内容
+                    document.getElementById('adviceInput').value = '';
+                    document.getElementById('success-popup').style.display = 'block';
+                } else {
+                    throw new Error('提交失败');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('提交失败，请稍后再试');
+            })
+            .finally(() => {
+                // 无论提交成功或失败，都关闭确认发送窗口
+                closeConfirmPopup();
+            });
+    }
+</script>
+</body>
+</html>

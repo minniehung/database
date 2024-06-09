@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>查詢菜單</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        .header {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .header button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .calendar {
+            margin-top: 20px;
+            display: inline-block;
+            position: relative;
+        }
+        .calendar-toggle, .search-button {
+            cursor: pointer;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .search-button {
+            background-color: green;
+            color: white;
+        }
+        .food-list {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            overflow-x: auto; /* 当内容超出容器宽度时显示滚动条 */
+        }
+
+        .food-list table {
+            margin-top: 20px;
+            border-collapse: collapse;
+            width: 200%; /* 将表格宽度设置为父容器的200% */
+            margin-left: -65px; /* 左移20px */
+        }
+
+        .food-list table th, .food-list table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .food-list table th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <button onclick="location.href='member-option.html'">回前頁</button>
+    <button onclick="location.href='choose-user.html'">登出</button>
+</div>
+<div>
+    <h2>查詢菜單</h2>
+</div>
+<div class="calendar">
+    <input type="date" id="datePicker" class="calendar-toggle">
+</div>
+<button class="search-button" onclick="searchFood()">搜尋</button>
+<div class="food-list">
+    <div id="food-list">
+        <!-- 菜肴列表将显示在这里 -->
+    </div>
+</div>
+
+<script>
+    async function searchFood() {
+        const date = document.getElementById('datePicker').value;
+        if (!date) {
+            alert('請選擇日期');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/food?date=${date}`);
+            const data = await response.json();
+            displayFoodData(data);
+        } catch (error) {
+            console.error('Error fetching food data:', error);
+        }
+    }
+
+    function displayFoodData(foodData) {
+        const foodList = document.getElementById('food-list');
+        foodList.innerHTML = '';
+
+        if (foodData.length === 0) {
+            foodList.innerHTML = '<div>還沒出菜單!再等等</div>';
+            return;
+        }
+
+        const table = document.createElement('table');
+        table.className = 'food-table';
+
+        const headerRow = document.createElement('tr');
+        headerRow.innerHTML = `
+            <th>時間</th>
+            <th>編號</th>
+            <th>菜餚</th>
+        `;
+        table.appendChild(headerRow);
+
+        foodData.forEach(food => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${food.food_time}</td>
+                <td>${food.c_number}</td>
+                <td>${food.cuisine}</td>
+            `;
+            table.appendChild(row);
+        });
+
+        foodList.appendChild(table);
+    }
+</script>
+</body>
+</html>

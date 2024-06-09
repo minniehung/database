@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>會員登入</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        input {
+            margin: 10px 0;
+            padding: 10px;
+            width: 200px;
+        }
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        .link {
+            margin-top: 10px;
+        }
+        .top-right-buttons {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .top-right-buttons .button {
+            margin: 0 5px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #008CBA;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .top-right-buttons .button:hover {
+            background-color: #007B9E;
+        }
+    </style>
+</head>
+<body>
+<div class="top-right-buttons">
+    <button class="button" onclick="window.location.href='/choose-user.html'">回前頁</button>
+</div>
+<div class="container">
+    <h1>會員登入</h1>
+    <form id="member-login-form">
+        <input type="text" id="tel" name="tel" placeholder="電話" required>
+        <input type="password" id="password" name="password" placeholder="密碼" required>
+        <button type="submit">登入</button>
+    </form>
+    <div class="link">
+        <a href="/member-register.html">註冊會員</a>
+    </div>
+</div>
+<script>
+    document.getElementById('member-login-form').addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const tel = document.getElementById('tel').value;
+        const password = document.getElementById('password').value;
+
+        try {
+            const response = await fetch('/member-login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ tel, password })
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                alert(result.error);
+            } else {
+                alert(result.message);
+                window.location.href = 'member-option.html';
+            }
+        } catch (error) {
+            alert('網路錯誤，請稍後再試');
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Box</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .header {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .header button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap; /* 允许容器内的元素换行 */
+            justify-content: center; /* 在主轴上居中对齐 */
+        }
+        .result {
+            margin: 10px; /* 添加一些间距 */
+            flex: 1; /* 让每个表格占据相同的空间 */
+        }
+        .new{
+            margin-top: 100px;
+            margin-bottom: 70px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <button onclick="location.href='employee-option.html'">回首頁</button>
+    <button onclick="location.href='choose-user.html'">登出</button>
+</div>
+<div class="new">
+    <label for="boxNumber">包廂號碼:</label>
+    <input type="text" id="boxNumber" name="boxNumber">
+    <label for="boxState">狀態:</label>
+    <select id="boxState" name="boxState">
+        <option value="Using">Using</option>
+        <option value="Empty">Empty</option>
+        <option value="Cleaning">Cleaning</option>
+    </select>
+    <button onclick="updateBoxStatus()">更新</button>
+</div>
+<div class="container">
+    <div class="result">
+        <table id="resultsTable2">
+            <thead>
+            <tr>
+                <th>NO</th>
+                <th>P_number</th>
+                <th>State</th>
+            </tr>
+            </thead>
+            <tbody id="pNumberStatus2">
+            <!-- 查询结果将在这里生成 -->
+            </tbody>
+        </table>
+    </div>
+    <div class="result">
+        <table id="resultsTable3">
+            <thead>
+            <tr>
+                <th>NO</th>
+                <th>P_number</th>
+                <th>State</th>
+            </tr>
+            </thead>
+            <tbody id="pNumberStatus3">
+            <!-- 查询结果将在这里生成 -->
+            </tbody>
+        </table>
+    </div>
+    <div class="result">
+        <table id="resultsTable4">
+            <thead>
+            <tr>
+                <th>NO</th>
+                <th>P_number</th>
+                <th>State</th>
+            </tr>
+            </thead>
+            <tbody id="pNumberStatus4">
+            <!-- 查询结果将在这里生成 -->
+            </tbody>
+        </table>
+    </div>
+    <div class="result">
+        <table id="resultsTable5">
+            <thead>
+            <tr>
+                <th>NO</th>
+                <th>P_number</th>
+                <th>State</th>
+            </tr>
+            </thead>
+            <tbody id="pNumberStatus5">
+            <!-- 查询结果将在这里生成 -->
+            </tbody>
+        </table>
+    </div>
+    <div class="result">
+        <table id="resultsTable6">
+            <thead>
+            <tr>
+                <th>NO</th>
+                <th>P_number</</th>
+                <th>State</th>
+            </tr>
+            </thead>
+            <tbody id="pNumberStatus6">
+            <!-- 查询结果将在这里生成 -->
+            </tbody>
+        </table>
+    </div>
+    <div class="result">
+        <table id="resultsTable7">
+            <thead>
+            <tr>
+                <th>NO</th>
+                <th>P_number</th>
+                <th>State</th>
+            </tr>
+            </thead>
+            <tbody id="pNumberStatus7">
+            <!-- 查询结果将在这里生成 -->
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    // 页面加载后执行查询函数
+    window.addEventListener('load', () => {
+        queryPNumbersInRange(200, 299, 'pNumberStatus2'); // 查询以 2 开头的包厢
+        queryPNumbersInRange(300, 399, 'pNumberStatus3'); // 查询以 3 开头的包厢
+        queryPNumbersInRange(400, 499, 'pNumberStatus4'); // 查询以 4 开头的包厢
+        queryPNumbersInRange(500, 599, 'pNumberStatus5'); // 查询以 5 开头的包厢
+        queryPNumbersInRange(600, 699, 'pNumberStatus6'); // 查询以 6 开头的包厢
+        queryPNumbersInRange(700, 799, 'pNumberStatus7'); // 查询以 7 开头的包厢
+    });
+
+    // 查询指定范围内的包厢状态
+    function queryPNumbersInRange(start, end, tableId) {
+        // 清空对应表格中的数据
+        document.getElementById(tableId).innerHTML = '';
+
+        // 发送查询请求获取对应范围内的包厢状态
+        fetch(`/api/pNumberStatus?start=${start}&end=${end}`)
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById(tableId);
+                data.forEach(row => {
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `
+                        <td>${row.no}</td>
+                        <td>${row.p_number}</td>
+                        <td>${row.state}</td>
+                    `;
+                    tableBody.appendChild(newRow);
+                });
+            })
+            .catch(error => console.error('Error fetching P_number status:', error));
+    }
+
+    // 更新包厢状态
+    function updateBoxStatus() {
+        const boxNumber = document.getElementById('boxNumber').value;
+        const boxState = document.getElementById('boxState').value;
+
+        fetch(`/api/updateBoxStatus`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ no: boxNumber, state: boxState }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // 根据包厢号刷新对应的表格
+                    const start = Math.floor(boxNumber / 100) * 100 + 1;
+                    const end = start + 99;
+                    queryPNumbersInRange(start, end, `pNumberStatus${Math.floor(boxNumber / 100)}`);
+                } else {
+                    console.error('Error updating box status:', data.error);
+                }
+            })
+            .catch(error => console.error('Error updating box status:', error));
+    }
+</script>
+</body>
+</html>

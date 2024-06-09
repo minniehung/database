@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Library</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .input-group {
+            margin: 10px 0;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .header {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .header button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .query-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <button onclick="location.href='member-option.html'">回前頁</button>
+    <button onclick="location.href='choose-user.html'">登出</button>
+</div>
+<div class
+<div class="container">
+    <h1>Search Library</h1>
+    <div class="input-group">
+        <label for="song_number">Song Number</label>
+        <input type="number" id="song_number" name="song_number">
+    </div>
+    <div class="input-group">
+        <label for="song_name">Song Name</label>
+        <input type="text" id="song_name" name="song_name">
+    </div>
+    <div class="input-group">
+        <label for="singer">Singer</label>
+        <input type="text" id="singer" name="singer">
+    </div>
+    <div class="input-group">
+        <label for="type">Type</label>
+        <input type="text" id="type" name="type">
+    </div>
+    <button class="query-button" onclick="search()">查詢</button>
+</div>
+
+<table id="resultsTable">
+    <thead>
+    <tr>
+        <th>Song Number</th>
+        <th>Type</th>
+        <th>Song Name</th>
+        <th>Singer</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- 查詢結果將在這裡生成 -->
+    </tbody>
+</table>
+
+<script>
+    function search() {
+        const songNumber = document.getElementById('song_number').value;
+        const songName = document.getElementById('song_name').value;
+        const singer = document.getElementById('singer').value;
+        const type = document.getElementById('type').value;
+
+        const queryParams = new URLSearchParams({
+            songNumber: songNumber,
+            songName: songName,
+            singer: singer,
+            type: type
+        });
+
+        fetch('/search?' + queryParams.toString())
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.querySelector('#resultsTable tbody');
+                tableBody.innerHTML = ''; // 清空现有内容
+                data.forEach(song => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${song.song_number}</td>
+                        <td>${song.type}</td>
+                        <td>${song.songName}</td>
+                        <td>${song.singer}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => console.error('查询请求失败:', error));
+    }
+
+    // 初始加载全部数据
+    document.addEventListener('DOMContentLoaded', () => search());
+</script>
+</body>
+</html>
